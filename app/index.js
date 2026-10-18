@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const Blockchain = require('../blockchain');
 const Wallet = require('../wallet');
 const TransactionPool = require('../wallet/transaction-pool');
+const Miner = require('./miner');
 const P2pServer = require('./p2p-server');
 
 // If no environment variable is set, each of these falls back to a default
@@ -19,6 +20,7 @@ const transactionPool = new TransactionPool();
 // clears mined transactions out of the pool on every successful replace),
 // even before any endpoint here uses the pool directly.
 const p2pServer = new P2pServer({ blockchain: bc, transactionPool });
+const miner = new Miner({ blockchain: bc, transactionPool, wallet, p2pServer });
 
 app.use(bodyParser.json());
 
@@ -47,6 +49,28 @@ app.get('/wallet-info', (req, res) => {
         address: wallet.publicKey,
         balance: Wallet.calculateBalance({ chain: bc.chain, address: wallet.publicKey })
     });
+});
+
+app.get('/transactions', (req, res) => {
+    res.json(transactionPool.transactions);
+});
+
+app.post('/transact', (req, res) => {
+    const { recipient, amount } = req.body;
+    const transaction = wallet.createTransaction(recipient, amount, bc, transactionPool);
+
+    if (!transaction) {
+        return res.status(400).json({ error: 'Transaction could not be created - check the amount against the wallet balance.' });
+    }
+
+    p2pServer.broadcastTransaction(transaction);
+    res.json(transaction);
+});
+
+app.post('/mine-transactions', (req, res) => {
+    const block = miner.mine();
+    console.log(`New block mined from the transaction pool: ${block.toString()}`);
+    res.redirect('/blocks');
 });
 
 app.listen(HTTP_PORT, () => console.log(`Listening on port ${HTTP_PORT}`));
