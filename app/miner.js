@@ -56,8 +56,12 @@ class Miner {
             return false;
         }
 
-        // Check if the transaction amount is valid
-        const { amount, address } = transaction.output;
+        // Check if the transaction amount is valid. transaction.output
+        // (singular) doesn't exist on a Transaction - outputs is the
+        // array - so this destructured undefined and threw every time
+        // this method ran. input.amount is the real total value of the
+        // transaction.
+        const { amount } = transaction.input;
         if (amount <= 0) {
             console.error('Invalid transaction amount');
             return false;
