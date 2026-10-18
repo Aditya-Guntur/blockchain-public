@@ -65,7 +65,13 @@ class Transaction {
         // validation.
         const transaction = new this();
         transaction.outputs.push({ amount: MINING_REWARD, address: minerWallet.publicKey });
-        transaction.input = MINING_INPUT;
+        // Wallet.calculateBalance() only counts an output if its
+        // transaction's input.timestamp is newer than the recipient's own
+        // last transaction - MINING_INPUT has no timestamp field, so
+        // `undefined > startTime` was always false and every mined reward
+        // was silently never credited to anyone's balance, despite being
+        // part of a perfectly valid block.
+        transaction.input = { ...MINING_INPUT, timestamp: Date.now() };
         return transaction;
     }
 
