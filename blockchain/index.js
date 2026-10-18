@@ -40,8 +40,13 @@ class Blockchain {
             // Validate difficulty adjustment
             if (Math.abs(lastDifficulty - difficulty) > 1) return false;
 
-            // Validate transactions if this is not the genesis block
-            if (i > 0) {
+            // Blocks mined through the raw POST /mine endpoint can carry
+            // any data, not just a transaction array - addBlock() never
+            // enforced that shape. The reward-transaction checks below
+            // assume an array of transaction objects and threw a TypeError
+            // on anything else, so only transaction-shaped blocks go
+            // through transaction validation at all.
+            if (Array.isArray(data)) {
                 let rewardTransaction = data.find(tx => tx.input.address === '*mining-reward*');
 
                 // Check if there's exactly one reward transaction
@@ -92,6 +97,13 @@ class Blockchain {
     validTransactionData({ chain }) {
         for (let i = 1; i < chain.length; i++) {
             const block = chain[i];
+            // Same non-array-data case as isValidChain() above: block.data
+            // from a raw POST /mine block isn't guaranteed to be an array,
+            // and a bare string is itself iterable character-by-character,
+            // so this didn't fail fast - it silently iterated characters
+            // and crashed on the first `.input` access instead.
+            if (!Array.isArray(block.data)) continue;
+
             const transactionSet = new Set();
             let rewardTransactionCount = 0;
 
