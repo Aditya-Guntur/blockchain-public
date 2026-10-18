@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const Blockchain = require('../blockchain');
+const Wallet = require('../wallet');
 const TransactionPool = require('../wallet/transaction-pool');
 const P2pServer = require('./p2p-server');
 
@@ -12,6 +13,7 @@ const HTTP_PORT = process.env.HTTP_PORT || 3001;
 
 const app = express();
 const bc = new Blockchain();
+const wallet = new Wallet();
 const transactionPool = new TransactionPool();
 // p2pServer always needs a transactionPool to apply CHAIN messages (it
 // clears mined transactions out of the pool on every successful replace),
@@ -34,6 +36,17 @@ app.post('/mine', (req, res) => {
     console.log(`New block added: ${block.toString()}`);
     p2pServer.syncChains();
     res.redirect('/blocks');
+});
+
+app.get('/public-key', (req, res) => {
+    res.json({ publicKey: wallet.publicKey });
+});
+
+app.get('/wallet-info', (req, res) => {
+    res.json({
+        address: wallet.publicKey,
+        balance: Wallet.calculateBalance({ chain: bc.chain, address: wallet.publicKey })
+    });
 });
 
 app.listen(HTTP_PORT, () => console.log(`Listening on port ${HTTP_PORT}`));
