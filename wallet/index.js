@@ -42,12 +42,22 @@ class Wallet {
     }
 
     calculateBalance(blockchain) {
-        let balance = this.balance;
+        // blockchain/index.js and app/miner.js both need to check an
+        // arbitrary address's balance, not just this wallet's own - this
+        // used to be the only implementation of this logic, as an instance
+        // method keyed on `this.publicKey`, so a static
+        // `Wallet.calculateBalance({ chain, address })` call just didn't
+        // exist and crashed with a TypeError wherever it was called.
+        return Wallet.calculateBalance({ chain: blockchain.chain, address: this.publicKey });
+    }
+
+    static calculateBalance({ chain, address }) {
+        let balance = INITIAL_BALANCE;
         const transactions = [];
 
-        // Get all transactions from the blockchain
-        for (let i = 1; i < blockchain.chain.length; i++) {
-            const block = blockchain.chain[i];
+        // Get all transactions from the chain
+        for (let i = 1; i < chain.length; i++) {
+            const block = chain[i];
             for (let transaction of block.data) {
                 if (transaction.id && transaction.input && transaction.outputs) {
                     transactions.push(transaction);
@@ -55,26 +65,27 @@ class Wallet {
             }
         }
 
-        // Get all transactions for this wallet
-        const walletInputs = transactions
-            .filter(transaction => transaction.input.address === this.publicKey);
+        // Get all transactions sent by this address
+        const addressInputs = transactions
+            .filter(transaction => transaction.input.address === address);
 
         let startTime = 0;
-        if (walletInputs.length > 0) {
-            const recentInput = walletInputs
+        if (addressInputs.length > 0) {
+            const recentInput = addressInputs
                 .reduce((prev, current) =>
                     prev.input.timestamp > current.input.timestamp ? prev : current);
 
             balance = recentInput.outputs
-                .find(output => output.address === this.publicKey).amount;
+                .find(output => output.address === address).amount;
             startTime = recentInput.input.timestamp;
         }
 
-        // Calculate balance from all outputs after the most recent transaction
+        // Add outputs received after the most recent transaction this
+        // address sent
         transactions.forEach(transaction => {
             if (transaction.input.timestamp > startTime) {
                 transaction.outputs.forEach(output => {
-                    if (output.address === this.publicKey) {
+                    if (output.address === address) {
                         balance += output.amount;
                     }
                 });
