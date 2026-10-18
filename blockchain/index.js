@@ -114,8 +114,22 @@ class Blockchain {
                         return false;
                     }
 
+                    // The balance a transaction's input.amount claims has
+                    // to be checked against the candidate chain's own state
+                    // just before this block - not against this.chain, the
+                    // validating node's own separate, live chain. Those are
+                    // usually different chains entirely, but when a node
+                    // validates a peer's chain that happens to share a
+                    // block this node already mined itself, this.chain
+                    // already has that very transaction applied, so the
+                    // comparison was against a *post*-transaction balance
+                    // and failed on every chain sharing any block with the
+                    // validating node - confirmed by actually running two
+                    // nodes and watching the second one reject the first
+                    // one's chain with "invalid transaction data" the
+                    // moment it tried to sync.
                     const trueBalance = Wallet.calculateBalance({
-                        chain: this.chain,
+                        chain: chain.slice(0, i),
                         address: transaction.input.address
                     });
 
