@@ -1,0 +1,182 @@
+[
+  {
+    "index": 1,
+    "difficulty": 4,
+    "mineTimeMs": 1,
+    "nonce": 7
+  },
+  {
+    "index": 2,
+    "difficulty": 5,
+    "mineTimeMs": 3,
+    "nonce": 41
+  },
+  {
+    "index": 3,
+    "difficulty": 6,
+    "mineTimeMs": 3,
+    "nonce": 56
+  },
+  {
+    "index": 4,
+    "difficulty": 7,
+    "mineTimeMs": 0,
+    "nonce": 38
+  },
+  {
+    "index": 5,
+    "difficulty": 8,
+    "mineTimeMs": 2,
+    "nonce": 157
+  },
+  {
+    "index": 6,
+    "difficulty": 9,
+    "mineTimeMs": 5,
+    "nonce": 573
+  },
+  {
+    "index": 7,
+    "difficulty": 10,
+    "mineTimeMs": 2,
+    "nonce": 160
+  },
+  {
+    "index": 8,
+    "difficulty": 11,
+    "mineTimeMs": 2,
+    "nonce": 220
+  },
+  {
+    "index": 9,
+    "difficulty": 12,
+    "mineTimeMs": 19,
+    "nonce": 2019
+  },
+  {
+    "index": 10,
+    "difficulty": 13,
+    "mineTimeMs": 20,
+    "nonce": 2492
+  },
+  {
+    "index": 11,
+    "difficulty": 14,
+    "mineTimeMs": 7,
+    "nonce": 1014
+  },
+  {
+    "index": 12,
+    "difficulty": 15,
+    "mineTimeMs": 9,
+    "nonce": 1364
+  },
+  {
+    "index": 13,
+    "difficulty": 16,
+    "mineTimeMs": 512,
+    "nonce": 77075
+  },
+  {
+    "index": 14,
+    "difficulty": 17,
+    "mineTimeMs": 511,
+    "nonce": 76657
+  },
+  {
+    "index": 15,
+    "difficulty": 18,
+    "mineTimeMs": 2387,
+    "nonce": 329934
+  },
+  {
+    "index": 16,
+    "difficulty": 17,
+    "mineTimeMs": 4599,
+    "nonce": 628900
+  },
+  {
+    "index": 17,
+    "difficulty": 18,
+    "mineTimeMs": 2738,
+    "nonce": 381549
+  },
+  {
+    "index": 18,
+    "difficulty": 17,
+    "mineTimeMs": 4285,
+    "nonce": 575743
+  },
+  {
+    "index": 19,
+    "difficulty": 18,
+    "mineTimeMs": 1100,
+    "nonce": 151813
+  },
+  {
+    "index": 20,
+    "difficulty": 19,
+    "mineTimeMs": 597,
+    "nonce": 69652
+  },
+  {
+    "index": 21,
+    "difficulty": 20,
+    "mineTimeMs": 1403,
+    "nonce": 195405
+  },
+  {
+    "index": 22,
+    "difficulty": 19,
+    "mineTimeMs": 5465,
+    "nonce": 721750
+  },
+  {
+    "index": 23,
+    "difficulty": 18,
+    "mineTimeMs": 7446,
+    "nonce": 1001642
+  },
+  {
+    "index": 24,
+    "difficulty": 19,
+    "mineTimeMs": 2984,
+    "nonce": 394318
+  },
+  {
+    "index": 25,
+    "difficulty": 20,
+    "mineTimeMs": 25,
+    "nonce": 3402
+  },
+  {
+    "index": 26,
+    "difficulty": 21,
+    "mineTimeMs": 2884,
+    "nonce": 396307
+  },
+  {
+    "index": 27,
+    "difficulty": 20,
+    "mineTimeMs": 5412,
+    "nonce": 724924
+  },
+  {
+    "index": 28,
+    "difficulty": 19,
+    "mineTimeMs": 9150,
+    "nonce": 1232791
+  },
+  {
+    "index": 29,
+    "difficulty": 20,
+    "mineTimeMs": 1645,
+    "nonce": 225606
+  },
+  {
+    "index": 30,
+    "difficulty": 19,
+    "mineTimeMs": 5179,
+    "nonce": 670800
+  }
+]
