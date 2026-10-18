@@ -1,22 +1,19 @@
 const Block = require("./block");
-const {DIFFICULTY} = require('../config');
+const { meetsDifficulty } = require("../crypto-hash");
 
 describe('Block', () => {
-
-
     let data, lastBlock, block;
-    /*THe reason we declared the variables here and not in before each is becuase then the
+    /* THe reason we declared the variables here and not in before each is becuase then the
     variables will only be in the scope of beforeEach rather than have scope in the unit test
     it functions. */
 
-    beforeEach(() =>{
+    beforeEach(() => {
         data = 'bar';
         lastBlock = Block.genesis();
-        block = Block.mineBlock(lastBlock,data);
+        block = Block.mineBlock({ lastBlock, data });
     });
 
-
-    it('sets the `data` to match the input', ()=> {
+    it('sets the `data` to match the input', () => {
         expect(block.data).toEqual(data);
     });
 
@@ -24,15 +21,21 @@ describe('Block', () => {
         expect(block.lastHash).toEqual(lastBlock.hash);
     });
 
-    it('generates a hash to match the difficulty.', ()=>{
-        expect(block.hash.substring(0,block.difficulty)).toEqual('0'.repeat(block.difficulty));
+    it('generates a hash that actually meets its own difficulty', () => {
+        expect(meetsDifficulty(block.hash, block.difficulty)).toBe(true);
     });
 
-    it('lower the difficulty for slowly mined blocks', ()=>{
-        expect(Block.adjustDifficulty(block, block.timestamp+360000 )).toEqual(block.difficulty-1)
+    it('lowers the difficulty for slowly mined blocks', () => {
+        expect(Block.adjustDifficulty({
+            originalBlock: block,
+            timestamp: block.timestamp + 360000
+        })).toEqual(block.difficulty - 1);
     });
 
-    if('increases the difficulty for fast mined blocks',()=>{
-        expect(Block.adjustDifficulty(block, block.timestamp+1)).toEqual(block.difficulty+1)
+    it('increases the difficulty for fast mined blocks', () => {
+        expect(Block.adjustDifficulty({
+            originalBlock: block,
+            timestamp: block.timestamp + 1
+        })).toEqual(block.difficulty + 1);
     });
 });
