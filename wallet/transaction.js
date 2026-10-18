@@ -76,8 +76,16 @@ class Transaction {
     }
 
     static signTransaction(transaction, senderWallet) {
+        // input.amount is the sender's total balance at signing time, which
+        // must equal the sum of this transaction's outputs (change back to
+        // the sender + whatever was actually sent). It was missing
+        // entirely, so TransactionPool.validTransactions() and
+        // Blockchain.validTransactionData() - both of which compare
+        // input.amount against the real output total - rejected every
+        // single transaction as invalid, always.
         transaction.input = {
             timestamp: Date.now(),
+            amount: senderWallet.balance,
             address: senderWallet.publicKey,
             signature: senderWallet.sign(ChainUtil.hash(transaction.outputs))
         };
