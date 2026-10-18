@@ -1,5 +1,5 @@
 const ChainUtil = require('../chain-util');
-const { MINING_REWARD } = require('../config');
+const { MINING_REWARD, MINING_INPUT } = require('../config');
 
 class Transaction {
     constructor() {
@@ -54,10 +54,19 @@ class Transaction {
     }
 
     static rewardTransaction(minerWallet, blockchainWallet) {
-        return Transaction.transactionWithOutputs(blockchainWallet, [{
-            amount: MINING_REWARD,
-            address: minerWallet.publicKey
-        }]);
+        // A reward transaction isn't signed by a real wallet - it's minted
+        // by the protocol itself when a block is mined, and Blockchain's
+        // isValidChain()/validTransactionData() both identify it by the
+        // MINING_INPUT sentinel address ('*mining-reward*'). Routing it
+        // through transactionWithOutputs()/signTransaction() instead signed
+        // it with blockchainWallet's real keypair and set input.address to
+        // that pubkey, so no mined block's reward transaction ever matched
+        // the sentinel and every block with a real reward failed chain
+        // validation.
+        const transaction = new this();
+        transaction.outputs.push({ amount: MINING_REWARD, address: minerWallet.publicKey });
+        transaction.input = MINING_INPUT;
+        return transaction;
     }
 
     static signTransaction(transaction, senderWallet) {
